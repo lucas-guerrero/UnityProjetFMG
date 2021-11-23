@@ -6,37 +6,43 @@ public class DeplacementPersonnage : MonoBehaviour
 {
     [SerializeField] public Camera cameraPlayer;
 
+    [SerializeField] public Canvas canvas;
+
+    [SerializeField] public GameObject doorBase;
+
     [SerializeField] private float speedMove;
     [SerializeField] private float speedCamera = 200f;
     [SerializeField] private float maxViewVertical = 45f;
     [SerializeField] private float minViewVertical = -30f;
 
     private Transform transformPlayer;
+    private Light light; 
     private float viewCameraVertical = 0f;
-    private bool isCollision = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        //Cursor.visible = false;
         transformPlayer = GetComponent<Transform>();
+        light = cameraPlayer.GetComponentInChildren<Light>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKey("up")) {
+        if(Input.GetKey("z")) {
             transformPlayer.Translate(0, 0, speedMove*Time.deltaTime);
         }
 
-        if(Input.GetKey("down")) {
+        if(Input.GetKey("s")) {
             transformPlayer.Translate(0, 0, -speedMove * Time.deltaTime);
         }
 
-        if(Input.GetKey("left")) {
+        if(Input.GetKey("q")) {
             transformPlayer.Translate(-speedMove * Time.deltaTime, 0, 0);
         }
 
-        if(Input.GetKey("right")) {
+        if(Input.GetKey("d")) {
             transformPlayer.Translate(speedMove * Time.deltaTime, 0, 0);
         }
 
@@ -62,13 +68,13 @@ public class DeplacementPersonnage : MonoBehaviour
                 else viewCameraVertical = minViewVertical;
             }
         }
-    }
 
-    void OnCollisionEnter(Collision collision) {
-        isCollision = true;
-    }
+        if(Input.GetKeyDown("f")) {
+            light.enabled = !light.enabled;
+        }
 
-    void OnCollisionExit(Collision collision) {
-        isCollision = false;
+        if(Input.GetKeyDown("e")) {
+            doorBase.GetComponent<DoorAnimation>().interactOn();
+        }
     }
 }
