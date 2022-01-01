@@ -14,14 +14,25 @@ public class DoorAnimation : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    public void interactOn() {
+    private void open() {
+        if(!isOpen) {
+            isOpen = true;
+            animator.Play("Base Layer.door_1_open");
+        }
+    }
+
+    private void close() {
         if(isOpen) {
             isOpen = false;
             animator.Play("Base Layer.door_1_close");
         }
-        else {
-            isOpen = true;
-            animator.Play("Base Layer.door_1_open");
-        }
+    }
+
+    void OnTriggerEnter() {
+        open();
+    }
+
+    void OnTriggerExit() {
+        close();
     }
 }

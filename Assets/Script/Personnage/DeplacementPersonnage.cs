@@ -8,8 +8,6 @@ public class DeplacementPersonnage : MonoBehaviour
 
     [SerializeField] public Canvas canvas;
 
-    [SerializeField] public GameObject doorBase;
-
     [SerializeField] private float speedMove;
     [SerializeField] private float speedCamera = 200f;
     [SerializeField] private float maxViewVertical = 45f;
@@ -71,10 +69,6 @@ public class DeplacementPersonnage : MonoBehaviour
 
         if(Input.GetKeyDown("f")) {
             light.enabled = !light.enabled;
-        }
-
-        if(Input.GetKeyDown("e")) {
-            doorBase.GetComponent<DoorAnimation>().interactOn();
         }
     }
 }
