@@ -17,6 +17,8 @@ public class DeplacementPersonnage : MonoBehaviour
     private Light light; 
     private float viewCameraVertical = 0f;
 
+    [SerializeField] public GameObject computer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,8 +47,6 @@ public class DeplacementPersonnage : MonoBehaviour
         }
 
         if(Input.GetAxis("Mouse X") != 0f ){
-
-
             transformPlayer.Rotate(0, Input.GetAxisRaw("Mouse X") * 0.01f * speedCamera, 0);
         }
 
@@ -69,6 +69,10 @@ public class DeplacementPersonnage : MonoBehaviour
 
         if(Input.GetKeyDown("f")) {
             light.enabled = !light.enabled;
+        }
+
+        if(Input.GetKeyDown("e")) {
+            computer.GetComponent<ComputerInteract>().CloseComputer();
         }
     }
 }
