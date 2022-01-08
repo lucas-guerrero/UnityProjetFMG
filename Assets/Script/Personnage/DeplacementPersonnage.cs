@@ -8,14 +8,16 @@ public class DeplacementPersonnage : MonoBehaviour
 
     [SerializeField] public Canvas canvas;
 
-    [SerializeField] private float speedMove;
-    [SerializeField] private float speedCamera = 200f;
-    [SerializeField] private float maxViewVertical = 45f;
-    [SerializeField] private float minViewVertical = -30f;
+    [SerializeField] private float speedMove = 6f;
+    [SerializeField] private float speedCamera = 500f;
+    [SerializeField] private float maxViewVertical = 90f;
+    [SerializeField] private float minViewVertical = -90f;
+    [SerializeField] private float maxArm = 2.5f;
 
     private Transform transformPlayer;
     private Light light; 
     private float viewCameraVertical = 0f;
+    private CharacterController controller;
 
     [SerializeField] public GameObject computer;
 
@@ -25,25 +27,36 @@ public class DeplacementPersonnage : MonoBehaviour
         //Cursor.visible = false;
         transformPlayer = GetComponent<Transform>();
         light = cameraPlayer.GetComponentInChildren<Light>();
+        controller = GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        if(!controller.isGrounded) {
+            Vector3 dir = transform.TransformDirection(Vector3.down);
+            controller.Move(dir * speedMove * Time.deltaTime);
+        }
+
         if(Input.GetKey("z")) {
-            transformPlayer.Translate(0, 0, speedMove*Time.deltaTime);
+            Vector3 dir = transform.TransformDirection(Vector3.forward);
+            controller.Move(dir * speedMove * Time.deltaTime);
         }
 
         if(Input.GetKey("s")) {
-            transformPlayer.Translate(0, 0, -speedMove * Time.deltaTime);
+            Vector3 dir = transform.TransformDirection(Vector3.back);
+            controller.Move(dir * speedMove * Time.deltaTime);
         }
 
         if(Input.GetKey("q")) {
-            transformPlayer.Translate(-speedMove * Time.deltaTime, 0, 0);
+            Vector3 dir = transform.TransformDirection(Vector3.left);
+            controller.Move(dir * speedMove * Time.deltaTime);
         }
 
         if(Input.GetKey("d")) {
-            transformPlayer.Translate(speedMove * Time.deltaTime, 0, 0);
+            Vector3 dir = transform.TransformDirection(Vector3.right);
+            controller.Move(dir * speedMove * Time.deltaTime);
         }
 
         if(Input.GetAxis("Mouse X") != 0f ){
@@ -72,7 +85,20 @@ public class DeplacementPersonnage : MonoBehaviour
         }
 
         if(Input.GetKeyDown("e")) {
-            computer.GetComponent<ComputerInteract>().CloseComputer();
+            //computer.GetComponent<ComputerInteract>().ToInteract();
+
+            Vector3 start = transform.position;
+            Vector3 dir = transform.TransformDirection(Vector3.forward);
+
+            int layerMask = 1 << 8;
+            RaycastHit hit;
+
+            if (Physics.Raycast(start, dir, out hit, maxArm, layerMask))
+            {
+                Debug.Log("Did Hit");
+                GameObject objectInteract = hit.collider.gameObject;
+                objectInteract.GetComponent<Interaction>().ToInteract();
+            }
         }
     }
 }

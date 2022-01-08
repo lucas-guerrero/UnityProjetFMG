@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ComputerInteract : MonoBehaviour
+public class ComputerInteract : MonoBehaviour, Interaction
 {
 
-    public bool isActived = false;
-    public Material close;
+    [SerializeField] private bool isActived = false;
+    [SerializeField] public Material close;
 
     private Light LightComputer;
+
+    [SerializeField] private string tagDoor;
     
     // Start is called before the first frame update
     void Start()
@@ -20,13 +22,15 @@ public class ComputerInteract : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void ToInteract() {
+        if(!isActived) {
+            CloseComputer();
+            ActivateDoor();
+            isActived = true;
+        }
     }
 
-    public void CloseComputer() {
+    private void CloseComputer() {
         if(LightComputer != null) {
             LightComputer.enabled = !LightComputer.enabled;
         }
@@ -41,6 +45,13 @@ public class ComputerInteract : MonoBehaviour
             }
             if(close != null) newMaterials[3] = close;
             childRenderer.materials = newMaterials;
+        }
+    }
+
+    private void ActivateDoor() {
+        GameObject[] doors = GameObject.FindGameObjectsWithTag(tagDoor);
+        foreach(GameObject door in doors) {
+            door.GetComponent<DoorInteraction>().isEnable = true;
         }
     }
 }
