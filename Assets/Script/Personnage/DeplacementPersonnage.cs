@@ -1,63 +1,64 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DeplacementPersonnage : MonoBehaviour
 {
-    [SerializeField] public Camera cameraPlayer;
-
-    [SerializeField] public Canvas canvas;
-
+    [SerializeField] private Camera cameraPlayer;
+    [SerializeField] private Canvas uI;
+    [SerializeField] private GameObject torch;
+    [Space]
     [SerializeField] private float speedMove = 6f;
     [SerializeField] private float speedCamera = 500f;
     [SerializeField] private float maxViewVertical = 90f;
     [SerializeField] private float minViewVertical = -90f;
     [SerializeField] private float maxArm = 2.5f;
+    [Space(10)]
+    [SerializeField] private bool takeFlash = false;
 
     private Transform transformPlayer;
-    private Light light; 
+    private Light torchLight; 
     private float viewCameraVertical = 0f;
-    private CharacterController controller;
+    private Rigidbody rb;
 
-    [SerializeField] public GameObject computer;
+    private Text textInteract;
+
 
     // Start is called before the first frame update
     void Start()
     {
         //Cursor.visible = false;
         transformPlayer = GetComponent<Transform>();
-        light = cameraPlayer.GetComponentInChildren<Light>();
-        controller = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
+
+        if(uI != null) textInteract = uI.GetComponentInChildren<Text>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        Vector3 start = transform.position;
+        Vector3 direc = transform.TransformDirection(Vector3.forward);
 
-        if(!controller.isGrounded) {
-            Vector3 dir = transform.TransformDirection(Vector3.down);
-            controller.Move(dir * speedMove * Time.deltaTime);
-        }
+        int layerMask = 1 << 8;
+        RaycastHit hit;
 
-        if(Input.GetKey("z")) {
-            Vector3 dir = transform.TransformDirection(Vector3.forward);
-            controller.Move(dir * speedMove * Time.deltaTime);
-        }
+        bool isInteract = Physics.Raycast(start, direc, out hit, maxArm, layerMask);
 
-        if(Input.GetKey("s")) {
-            Vector3 dir = transform.TransformDirection(Vector3.back);
-            controller.Move(dir * speedMove * Time.deltaTime);
+        if(isInteract) {
+            Debug.Log("Press E To Interact");
+            textInteract.enabled = true;
         }
+        else textInteract.enabled = false;
 
-        if(Input.GetKey("q")) {
-            Vector3 dir = transform.TransformDirection(Vector3.left);
-            controller.Move(dir * speedMove * Time.deltaTime);
-        }
+        //Debug.DrawLine(start, transform.TransformDirection(Vector3.forward), Color.green, 0.5f);
 
-        if(Input.GetKey("d")) {
-            Vector3 dir = transform.TransformDirection(Vector3.right);
-            controller.Move(dir * speedMove * Time.deltaTime);
-        }
+        Vector3 InputMovement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+
+        Vector3 dir = transform.TransformDirection(InputMovement) * speedMove;
+        rb.velocity = new Vector3(dir.x, rb.velocity.y, dir.z);
 
         if(Input.GetAxis("Mouse X") != 0f ){
             transformPlayer.Rotate(0, Input.GetAxisRaw("Mouse X") * 0.01f * speedCamera, 0);
@@ -81,24 +82,37 @@ public class DeplacementPersonnage : MonoBehaviour
         }
 
         if(Input.GetKeyDown("f")) {
-            light.enabled = !light.enabled;
+            if(takeFlash) torchLight.enabled = !torchLight.enabled;
         }
 
         if(Input.GetKeyDown("e")) {
-            //computer.GetComponent<ComputerInteract>().ToInteract();
-
-            Vector3 start = transform.position;
-            Vector3 dir = transform.TransformDirection(Vector3.forward);
-
-            int layerMask = 1 << 8;
-            RaycastHit hit;
-
-            if (Physics.Raycast(start, dir, out hit, maxArm, layerMask))
+            if (isInteract)
             {
-                Debug.Log("Did Hit");
                 GameObject objectInteract = hit.collider.gameObject;
-                objectInteract.GetComponent<Interaction>().ToInteract();
+                EInteract interaction = objectInteract.GetComponent<Interaction>().ToInteract();
+                switch (interaction) {
+                    case EInteract.OBJECT_DYNAMIC:
+                        break;
+                    case EInteract.COMPUTER: {
+                        if(!takeFlash) takeTorch(); 
+                        break;
+                    }
+                    default :
+                        break;
+                }
             }
         }
+    }
+
+    public void takeTorch()
+    {
+        takeFlash = true;
+
+        torch.transform.parent = cameraPlayer.transform;
+        torch.transform.localPosition = new Vector3(0.47f, -0.20f, 0.39f);
+        torch.transform.rotation = Quaternion.Euler(93, 0, 0);
+        //torch.transform.localPosition = new Vector3(0f, 0f, 0f);
+
+        torchLight = gameObject.GetComponentInChildren<Light>();
     }
 }

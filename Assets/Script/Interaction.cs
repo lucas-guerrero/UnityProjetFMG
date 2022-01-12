@@ -1,4 +1,12 @@
 public interface Interaction
 {
-    void ToInteract();
+    EInteract ToInteract();
+}
+
+public enum EInteract
+{
+    NONE,
+    COMPUTER,
+    TORCH,
+    OBJECT_DYNAMIC
 }

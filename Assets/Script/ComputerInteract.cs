@@ -22,12 +22,14 @@ public class ComputerInteract : MonoBehaviour, Interaction
         }
     }
 
-    public void ToInteract() {
+    public EInteract ToInteract() {
         if(!isActived) {
             CloseComputer();
             ActivateDoor();
             isActived = true;
+            return EInteract.COMPUTER;
         }
+        return EInteract.NONE;
     }
 
     private void CloseComputer() {
@@ -38,12 +40,12 @@ public class ComputerInteract : MonoBehaviour, Interaction
         MeshRenderer[] allMeshRenderer = GetComponentsInChildren<MeshRenderer>();
         foreach (MeshRenderer childRenderer in allMeshRenderer)
         {
-            Material[] newMaterials = new Material[4];
+            Material[] newMaterials = new Material[2];
 
-            for (int i=0; i< 4; ++i) {
+            for (int i=0; i< 2; ++i) {
                 newMaterials[i] = childRenderer.materials[i];
             }
-            if(close != null) newMaterials[3] = close;
+            if(close != null) newMaterials[0] = close;
             childRenderer.materials = newMaterials;
         }
     }

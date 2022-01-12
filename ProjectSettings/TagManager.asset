@@ -6,6 +6,7 @@ TagManager:
   tags:
   - computerLight
   - OpenDoor1
+  - UI
   layers:
   - Default
   - TransparentFX
