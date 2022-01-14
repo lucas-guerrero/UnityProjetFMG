@@ -6,23 +6,28 @@ using UnityEngine.UI;
 public class DeplacementPersonnage : MonoBehaviour
 {
     [SerializeField] private Camera cameraPlayer;
-    [SerializeField] private Canvas uI;
-    [SerializeField] private GameObject torch;
+    [SerializeField] private Text textInteract;
+    [SerializeField] private GameObject maxInteract;
+    [SerializeField] private Image imageComputer;
+    [SerializeField] private Canvas pause;
     [Space]
     [SerializeField] private float speedMove = 6f;
     [SerializeField] private float speedCamera = 500f;
     [SerializeField] private float maxViewVertical = 90f;
     [SerializeField] private float minViewVertical = -90f;
-    [SerializeField] private float maxArm = 2.5f;
-    [Space(10)]
-    [SerializeField] private bool takeFlash = false;
 
     private Transform transformPlayer;
-    private Light torchLight; 
+    private Light torchLight;
+    private GameObject torch;
     private float viewCameraVertical = 0f;
     private Rigidbody rb;
 
-    private Text textInteract;
+    private bool takeFlash = false;
+
+    private bool isTakeObject = false;
+    private GameObject ObjectTaking;
+
+    private int mode = 0; // GameMode: -1 -> Pause, 0 -> Game, 1 -> Text
 
 
     // Start is called before the first frame update
@@ -31,29 +36,41 @@ public class DeplacementPersonnage : MonoBehaviour
         //Cursor.visible = false;
         transformPlayer = GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();
-
-        if(uI != null) textInteract = uI.GetComponentInChildren<Text>();
-
+        imageComputer.enabled = false;
+        pause.enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+       switch (mode) {
+            case -1:
+               break;
+            case 1:
+                textMode();
+                break;
+            default:
+                gameMode();
+                break;
+       }
+    }
+
+    void gameMode()
+    {
+        Cursor.visible = false;
+
         Vector3 start = transform.position;
         Vector3 direc = transform.TransformDirection(Vector3.forward);
 
         int layerMask = 1 << 8;
         RaycastHit hit;
 
-        bool isInteract = Physics.Raycast(start, direc, out hit, maxArm, layerMask);
+        bool isInteract = Physics.Linecast(cameraPlayer.transform.position, maxInteract.transform.position, out hit, layerMask);
 
         if(isInteract) {
-            Debug.Log("Press E To Interact");
             textInteract.enabled = true;
         }
         else textInteract.enabled = false;
-
-        //Debug.DrawLine(start, transform.TransformDirection(Vector3.forward), Color.green, 0.5f);
 
         Vector3 InputMovement = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
 
@@ -81,38 +98,102 @@ public class DeplacementPersonnage : MonoBehaviour
             }
         }
 
+        if(Input.GetAxis("Cancel") != 0)
+        {
+            mode = -1;
+            Cursor.visible = true;
+            textInteract.enabled = false;
+            showPause();
+        }
+
         if(Input.GetKeyDown("f")) {
             if(takeFlash) torchLight.enabled = !torchLight.enabled;
         }
 
         if(Input.GetKeyDown("e")) {
-            if (isInteract)
+            if(isTakeObject)
+            {
+                dropObject();
+            }
+            else if (isInteract)
             {
                 GameObject objectInteract = hit.collider.gameObject;
-                EInteract interaction = objectInteract.GetComponent<Interaction>().ToInteract();
-                switch (interaction) {
-                    case EInteract.OBJECT_DYNAMIC:
-                        break;
-                    case EInteract.COMPUTER: {
-                        if(!takeFlash) takeTorch(); 
-                        break;
-                    }
-                    default :
-                        break;
+                if(objectInteract.GetComponent<Interaction>() != null)
+                {
+                    EInteract interaction = objectInteract.GetComponent<Interaction>().ToInteract();
+                    if(interaction == EInteract.TORCH) takeTorch(objectInteract);
+                    else if(interaction == EInteract.COMPUTER) computer();
                 }
+                else takeObject(objectInteract);
             }
         }
     }
 
-    public void takeTorch()
+    void showPause()
+    {
+        pause.enabled = true;
+    }
+
+    public void resumeGame()
+    {
+        pause.enabled = false;
+        mode = 0;
+        Cursor.visible = false;
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    void textMode()
+    {
+        if(Input.GetAxis("Cancel") != 0 || Input.GetKeyDown("e"))
+        {
+            mode = 0;
+            imageComputer.enabled = false;
+            Cursor.visible = false;
+        }
+    }
+
+    void computer()
+    {
+        Cursor.visible = true;
+        textInteract.enabled = false;
+        mode = 1;
+    }
+
+    void dropObject() 
+    {
+        isTakeObject = false;
+
+        textInteract.text = "Press E To Interact";
+
+        ObjectTaking.transform.parent = null;
+        ObjectTaking.GetComponent<Rigidbody>().isKinematic = false;
+    }
+
+    void takeObject(GameObject gameObject) 
+    {
+        isTakeObject = true;
+
+        textInteract.text = "Press E To Drop";
+
+        ObjectTaking = gameObject;
+        ObjectTaking.GetComponent<Rigidbody>().isKinematic = true;
+        ObjectTaking.transform.parent = cameraPlayer.transform;
+    }
+
+    void takeTorch(GameObject gameObject)
     {
         takeFlash = true;
 
+        torch = gameObject;
         torch.transform.parent = cameraPlayer.transform;
         torch.transform.localPosition = new Vector3(0.47f, -0.20f, 0.39f);
-        torch.transform.rotation = Quaternion.Euler(93, 0, 0);
-        //torch.transform.localPosition = new Vector3(0f, 0f, 0f);
 
-        torchLight = gameObject.GetComponentInChildren<Light>();
+        torch.transform.localRotation = Quaternion.Euler(93f, -4f, 0f);
+
+        torchLight = this.gameObject.GetComponentInChildren<Light>();
     }
 }

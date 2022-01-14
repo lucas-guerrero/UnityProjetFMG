@@ -7,6 +7,7 @@ TagManager:
   - computerLight
   - OpenDoor1
   - UI
+  - OpenDoorCantine
   layers:
   - Default
   - TransparentFX

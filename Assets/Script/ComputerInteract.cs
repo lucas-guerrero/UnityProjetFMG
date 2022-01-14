@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ComputerInteract : MonoBehaviour, Interaction
 {
 
     [SerializeField] private bool isActived = false;
     [SerializeField] public Material close;
+    [Space(10)]
+    [SerializeField] private Sprite sprite;
+    [SerializeField] private Image imageComputer;
 
     private Light LightComputer;
 
@@ -26,6 +30,13 @@ public class ComputerInteract : MonoBehaviour, Interaction
         if(!isActived) {
             CloseComputer();
             ActivateDoor();
+
+            if(imageComputer != null)
+            {
+                imageComputer.enabled = true;
+                //imageComputer.sprite = sprite;
+            }
+
             isActived = true;
             return EInteract.COMPUTER;
         }
@@ -53,7 +64,7 @@ public class ComputerInteract : MonoBehaviour, Interaction
     private void ActivateDoor() {
         GameObject[] doors = GameObject.FindGameObjectsWithTag(tagDoor);
         foreach(GameObject door in doors) {
-            door.GetComponent<DoorInteraction>().isEnable = true;
+            door.GetComponent<OpeningDoor>().isEnable = true;
         }
     }
 }

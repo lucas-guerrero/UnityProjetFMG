@@ -10,8 +10,6 @@ public class LightDefective : MonoBehaviour
     [Space]
 
     [SerializeField] private float TimeOfAlt = 0.05f;
-    [SerializeField] private float TimeOfDefective = 2f;
-    [SerializeField] private float TimeOfDisable = 5f;
 
     private bool IsActivate = false;
 
@@ -24,8 +22,10 @@ public class LightDefective : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CurrentTimeActivate = TimeOfDisable;
         CurrentTimeAlt = TimeOfAlt;
+
+        CurrentTimeActivate = Random.Range(2f, 5f);
+
         Light = GetComponentInChildren<Light>();
         rendere = gameObject.GetComponent<MeshRenderer>();
     }
@@ -38,12 +38,12 @@ public class LightDefective : MonoBehaviour
         if(CurrentTimeActivate <= 0f) {
             CurrentTimeAlt = TimeOfAlt;
             if(IsActivate) {
-                CurrentTimeActivate = TimeOfDisable;
-                Light.enabled = false;
+                CurrentTimeActivate = Random.Range(2f, 5f);
+                Light.enabled = true;
             }
             else {
-                CurrentTimeActivate = TimeOfDefective;
-                Light.enabled = true;
+                CurrentTimeActivate = Random.Range(2f, 5f);
+                Light.enabled = false;
             }
 
             IsActivate = !IsActivate;
