@@ -8,7 +8,7 @@ public class DeplacementPersonnage : MonoBehaviour
     [SerializeField] private Camera cameraPlayer;
     [SerializeField] private Text textInteract;
     [SerializeField] private GameObject maxInteract;
-    [SerializeField] private Image imageComputer;
+    [SerializeField] private Canvas canvasComputer;
     [SerializeField] private Canvas pause;
     [Space]
     [SerializeField] private float speedMove = 6f;
@@ -36,7 +36,7 @@ public class DeplacementPersonnage : MonoBehaviour
         //Cursor.visible = false;
         transformPlayer = GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();
-        imageComputer.enabled = false;
+        canvasComputer.enabled = false;
         pause.enabled = false;
     }
 
@@ -151,8 +151,8 @@ public class DeplacementPersonnage : MonoBehaviour
         if(Input.GetAxis("Cancel") != 0 || Input.GetKeyDown("e"))
         {
             mode = 0;
-            imageComputer.enabled = false;
             Cursor.visible = false;
+            canvasComputer.enabled = false;
         }
     }
 
@@ -167,7 +167,7 @@ public class DeplacementPersonnage : MonoBehaviour
     {
         isTakeObject = false;
 
-        textInteract.text = "Press E To Interact";
+        textInteract.text = "Appuyer sur E pour interagir";
 
         ObjectTaking.transform.parent = null;
         ObjectTaking.GetComponent<Rigidbody>().isKinematic = false;
@@ -177,7 +177,7 @@ public class DeplacementPersonnage : MonoBehaviour
     {
         isTakeObject = true;
 
-        textInteract.text = "Press E To Drop";
+        textInteract.text = "Appuyer sur E pour lacher";
 
         ObjectTaking = gameObject;
         ObjectTaking.GetComponent<Rigidbody>().isKinematic = true;

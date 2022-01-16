@@ -10,15 +10,23 @@ public class ComputerInteract : MonoBehaviour, Interaction
     [SerializeField] public Material close;
     [Space(10)]
     [SerializeField] private Sprite sprite;
-    [SerializeField] private Image imageComputer;
+    [SerializeField] private Canvas canvas;
+    // [SerializeField] private Image imageComputer;
+    // [SerializeField] private Text textOuverture;
 
     private Light LightComputer;
 
     [SerializeField] private string tagDoor;
+
+    private Image imageComputer;
+    private Text textOuverture;
     
     // Start is called before the first frame update
     void Start()
     {
+        imageComputer = canvas.GetComponentInChildren<Image>();
+        textOuverture = canvas.GetComponentInChildren<Text>();
+
         GameObject[] allComputer = GameObject.FindGameObjectsWithTag("computerLight");
         foreach (GameObject child in allComputer)
         {
@@ -31,13 +39,13 @@ public class ComputerInteract : MonoBehaviour, Interaction
             CloseComputer();
             ActivateDoor();
 
-            if(imageComputer != null)
-            {
-                imageComputer.enabled = true;
-                //imageComputer.sprite = sprite;
-            }
-
             isActived = true;
+
+            canvas.enabled = true;
+
+            imageComputer.sprite = sprite;
+            textOuverture.text = "Les portes des " + tagDoor + " est débloquées";
+
             return EInteract.COMPUTER;
         }
         return EInteract.NONE;

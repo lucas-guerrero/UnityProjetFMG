@@ -5,9 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - computerLight
-  - OpenDoor1
   - UI
-  - OpenDoorCantine
+  - Chambres
+  - Cantines
   layers:
   - Default
   - TransparentFX

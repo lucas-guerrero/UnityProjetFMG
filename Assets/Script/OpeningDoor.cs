@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OpeningDoor : MonoBehaviour
 {
     private Animator animator;
 
     [SerializeField] public bool isEnable = false;
+
+    [SerializeField] private Text textBloque;
 
     [SerializeField] private Mesh enable;
     [SerializeField] private Mesh disable;
@@ -48,9 +51,11 @@ public class OpeningDoor : MonoBehaviour
 
     void OnTriggerEnter() {
         if(isEnable) open();
+        else textBloque.enabled = true;
     }
 
     void OnTriggerExit() {
         if(isEnable) close();
+        else textBloque.enabled = false;
     }
 }
