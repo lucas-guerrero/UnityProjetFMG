@@ -8521,7 +8521,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 94
+  m_Constraints: 90
   m_CollisionDetection: 0
 --- !u!1001 &896329365
 PrefabInstance:
@@ -16796,6 +16796,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: c5acc3c850ac00142a9f8d4fd77cae0d, type: 2}
+    - target: {fileID: 7412736461773627220, guid: 82c3b8fcabff82d4787f83e992e386df, type: 3}
+      propertyPath: m_RefreshMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82c3b8fcabff82d4787f83e992e386df, type: 3}
 --- !u!1001 &1857178366
@@ -18631,7 +18635,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2054739830}
   m_LocalRotation: {x: -0, y: -0.15133262, z: -0, w: 0.98848295}
-  m_LocalPosition: {x: 5.18, y: 7.05, z: 4.08}
+  m_LocalPosition: {x: 5.18, y: 6.38, z: 4.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1813514711}
