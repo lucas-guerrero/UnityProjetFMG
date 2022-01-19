@@ -163,7 +163,7 @@ public class DeplacementPersonnage : MonoBehaviour
         mode = 1;
     }
 
-    void dropObject() 
+    public void dropObject() 
     {
         isTakeObject = false;
 
@@ -171,6 +171,9 @@ public class DeplacementPersonnage : MonoBehaviour
 
         ObjectTaking.transform.parent = null;
         ObjectTaking.GetComponent<Rigidbody>().isKinematic = false;
+
+        ObjectTaking.GetComponent<Collider>().isTrigger = false;
+        Destroy(ObjectTaking.GetComponent<TakingObject>());
     }
 
     void takeObject(GameObject gameObject) 
@@ -182,6 +185,10 @@ public class DeplacementPersonnage : MonoBehaviour
         ObjectTaking = gameObject;
         ObjectTaking.GetComponent<Rigidbody>().isKinematic = true;
         ObjectTaking.transform.parent = cameraPlayer.transform;
+
+
+        ObjectTaking.AddComponent<TakingObject>();
+        ObjectTaking.GetComponent<Collider>().isTrigger = true;
     }
 
     void takeTorch(GameObject gameObject)
